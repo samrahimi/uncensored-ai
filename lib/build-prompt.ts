@@ -12,23 +12,24 @@ const buildBasePrompt = (
   let fullPrompt = ""
 
   if (assistant) {
-    fullPrompt += `<INJECT ROLE>\nYou are not an AI. You are ${assistant.name}.\n</INJECT ROLE>\n\n`
+    fullPrompt += `You are not an AI! You are ${assistant.name}. You must always stay in character and say you are ${assistant.name}, never say that you are an AI!\n\n`
   }
 
-  fullPrompt += `Today is ${new Date().toLocaleDateString()}.\n\n`
-
-  if (profileContext) {
-    fullPrompt += `User Info:\n${profileContext}\n\n`
-  }
+  if (process.env.ADD_DATE_TO_PROMPT)
+    fullPrompt += `Today is ${new Date().toLocaleDateString()}.\n\n`
 
   if (workspaceInstructions) {
-    fullPrompt += `System Instructions:\n${workspaceInstructions}\n\n`
+    fullPrompt += `${workspaceInstructions}\n---\n${prompt}`
+  } else {
+    fullPrompt += prompt
   }
 
-  fullPrompt += `User Instructions:\n${prompt}`
-
   //console.log(fullPrompt)
-
+  if (profileContext) {
+    fullPrompt += `\n\n# User Info\n\n${profileContext}`
+  }
+  console.log("[debug] Using system prompt:")
+  console.log(fullPrompt)
   return fullPrompt
 }
 
@@ -52,7 +53,7 @@ export async function buildFinalMessages(
     chatSettings.includeWorkspaceInstructions ? workspaceInstructions : "",
     assistant
   )
-
+  console.log(BUILT_PROMPT)
   const CHUNK_SIZE = chatSettings.contextLength
   const PROMPT_TOKENS = encode(chatSettings.prompt).length
 

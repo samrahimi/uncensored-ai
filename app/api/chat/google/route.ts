@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     chatSettings: ChatSettings
     messages: any[]
   }
-
+  console.log(JSON.stringify({ chatSettings, messages }, null, 2))
   try {
     const profile = await getServerProfile()
 
@@ -48,7 +48,8 @@ export async function POST(request: Request) {
     const chat = googleModel.startChat({
       history: messages,
       generationConfig: {
-        temperature: chatSettings.temperature
+        temperature: chatSettings.temperature,
+        maxOutputTokens: 16384
       }
     })
 
