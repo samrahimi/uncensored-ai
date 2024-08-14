@@ -39,7 +39,7 @@ next-env.d.ts
 .VSCodeCounter
 tool-schemas
 custom-prompts
-
+research
 sw.js
 sw.js.map
 workbox-*.js

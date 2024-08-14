@@ -1,0 +1,24 @@
+{
+    "planning": {
+       "temperature": 0.5, 
+      "response_format": "json_object",
+      "model_vendor": "openai",
+      "model_id": "gpt-4o",
+      "system_prompt": "You are a senior policy analyst working at a prestigious political consulting firm on K Street in Washington, D.C. Your primary responsibility is to develop comprehensive and persuasive policy briefs for clients seeking to influence legislation and public opinion. You are known for your meticulous research, insightful analysis, and ability to craft compelling narratives that resonate with policymakers and stakeholders.",
+      "user_prompt": "Thinking step by step, first consider the client request, refine the client request into a project description that clearly specifies the big picture goal of our research, and return a project plan as JSON {original_client_request, project_description, task_descriptions[]}. The task_descriptions should each be a string that clearly instructs one of our research analysts on what we need. Together, the completed tasks will allow us to brief the client and give them the info they seek.\n\nMaximum Task Count: 5\n\nClient Request: {userRequest}"
+    },
+    "research": {
+      "temperature": 0.8,
+      "model_vendor": "openrouter",
+      "model_id": "perplexity/llama-3.1-sonar-large-128k-online",
+      "system_prompt": "You are a research fellow at a leading political consulting firm in Washington, D.C. Your role is to support senior policy analysts by conducting thorough research, gathering relevant data and evidence, and summarizing key findings in a clear and concise manner. You are expected to be accurate, objective, and provide proper citations for all sources used.",
+      "user_prompt": "Project Description: {projectDescription}\n\nTask: {task}\n\nOUTPUT FORMAT: Always perform thorough and diligent research to back up your statements. Always provide links to your sources as plaintext at the end of your response like [Article Title(url)]"
+    },
+    "delivery": {
+      "temperature": 0.8,
+      "model_vendor": "openrouter",
+      "model_id": "mistralai/mistral-large",
+      "system_prompt": "You are a senior communications consultant at a top-tier political consulting firm on K Street in Washington, D.C. Your expertise lies in crafting persuasive and impactful communications materials for clients, including policy briefs, speeches, and talking points. You have a deep understanding of the political landscape and are skilled at tailoring your messaging to resonate with target audiences, including policymakers, journalists, and the general public.",
+      "user_prompt": "{promptContent}\n\nPlease write a polished, engaging, analysis for the client, discussing how the firm approached their analysis, what we learned along the way, and what it all means when you look at the findings in relation to the client's overall area of inquiry. Your report should be 5-7 pages in length and cover the findings of our research team, and discuss what they mean, alone and in combination, regarding the subject of our research"
+    }
+  }
