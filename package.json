@@ -26,6 +26,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^0.0.41",
+    "@ai-sdk/openai": "^0.0.46",
     "@anthropic-ai/sdk": "^0.18.0",
     "@apidevtools/json-schema-ref-parser": "^11.1.0",
     "@azure/openai": "^1.0.0-beta.8",
@@ -71,12 +73,14 @@
     "cmdk": "^0.2.0",
     "d3-dsv": "^2.0.0",
     "date-fns": "^2.30.0",
+    "dotenv": "^16.4.5",
     "endent": "^2.1.0",
     "express": "^4.19.2",
     "gpt-tokenizer": "^2.1.2",
     "i18next": "^23.7.16",
     "i18next-resources-to-backend": "^1.2.0",
     "langchain": "^0.0.213",
+    "llm-scraper": "^1.5.1",
     "lucide-react": "^0.292.0",
     "mammoth": "^1.6.0",
     "next": "^14.1.0",
@@ -85,6 +89,7 @@
     "next-themes": "^0.2.1",
     "openai": "^4.23.0",
     "pdf-parse": "^1.1.1",
+    "playwright": "^1.46.0",
     "react": "^18",
     "react-day-picker": "^8.9.1",
     "react-dom": "^18",
@@ -97,7 +102,7 @@
     "remark-math": "^6.0.0",
     "sonner": "^1.3.1",
     "uuid": "^9.0.1",
-    "zod": "^3.22.4"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^14.0.2",
@@ -122,6 +127,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
+    "supabase": "^1.190.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss": "^3.3.5",
     "tailwindcss-animate": "^1.0.7",

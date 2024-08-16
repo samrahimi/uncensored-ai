@@ -1,5 +1,5 @@
 const agentConfig =  {
-"temperature": 0.5, 
+    "temperature": 0.5, 
    "response_format": "text",
    "model_vendor": "openai",
    "model_id": "gpt-4o",

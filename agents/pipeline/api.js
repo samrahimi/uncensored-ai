@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const { spawn } = require('child_process');
 const app = express();
@@ -16,7 +17,9 @@ app.get('/run-pipeline', (req, res) => {
     env: {
       ...process.env,
       OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-      OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY
+      OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
+      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+      GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY
     }
   });
 
@@ -37,4 +40,3 @@ app.get('/run-pipeline', (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-

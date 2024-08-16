@@ -1,4 +1,5 @@
 export * from "./announcement"
+export * from "./artifact"
 export * from "./assistant-retrieval-item"
 export * from "./chat"
 export * from "./chat-file"
