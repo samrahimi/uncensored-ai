@@ -6,7 +6,8 @@ import argparse
 from pathlib import Path
 
 # Set up your OpenAI API key
-openai.api_key = "sk-eFWX8iGsKlMtPIgDaDgXRoeXd7DcZGz1sLJ2NLZo7IT3BlbkFJZxuKxCNNXtf5psa16kRDNV3OYk_0NCs0vu_322ywkA"
+openai.api_key = ""
+
 
 def get_llm_ratings(text, title):
     prompt = f"""Please evaluate the following historical article titled "{title}" based on these criteria:
