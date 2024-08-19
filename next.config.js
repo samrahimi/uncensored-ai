@@ -17,7 +17,7 @@ module.exports = withBundleAnalyzer(
         },
         {
           protocol: "http",
-          hostname: "127.0.0.1"
+          hostname: "0.0.0.0"
         },
         {
           protocol: "https",

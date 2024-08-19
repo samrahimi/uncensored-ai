@@ -1,26 +1,68 @@
-const OpenAI = require('openai');
-const Anthropic = require('@anthropic-ai/sdk');
-const { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } = require('@google/generative-ai');
+// const OpenAI = require('openai');
+// const Anthropic = require('@anthropic-ai/sdk');
+// const { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } = require('@google/generative-ai');
+// const  Mistral = require('@mistralai/mistralai');
 
-// OpenAI client for calling official OpenAI models
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// //Mistral native client
+// const mistral = new Mistral({apiKey: process.env.MISTRAL_API_KEY});
 
-// OpenRouter API is openai compatible
-// For inference, set the model to {vendor}/{model_id} (anthropic/claude-3.5, etc.)
-const openrouter = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: 'https://openrouter.ai/api/v1',
-});
+// // OpenAI client for calling official OpenAI models
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
-// Anthropic client
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// // OpenRouter API is openai compatible
+// // For inference, set the model to {vendor}/{model_id} (anthropic/claude-3.5, etc.)
+// const openrouter = new OpenAI({
+//   apiKey: process.env.OPENROUTER_API_KEY,
+//   baseURL: 'https://openrouter.ai/api/v1',
+// });
 
-// Google AI client
-const googleAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
+// // Anthropic client
+// const anthropic = new Anthropic({
+//   apiKey: process.env.ANTHROPIC_API_KEY,
+// });
+
+// // Google AI client
+// const googleAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
+
+async function init() {
+  try {
+    const OpenAI = (await import('openai')).default;
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } = require('@google/generative-ai');
+    const Mistral = (await import('@mistralai/mistralai')).default
+
+    // Mistral native client
+    const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
+    // OpenAI client for calling official OpenAI models
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    // OpenRouter API is openai compatible
+    // For inference, set the model to {vendor}/{model_id} (anthropic/claude-3.5, etc.)
+    const openrouter = new OpenAI({
+      apiKey: process.env.OPENROUTER_API_KEY,
+      baseURL: 'https://openrouter.ai/api/v1',
+    });
+
+    // Anthropic client
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+
+    // Google AI client
+    const googleAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
+
+    return { mistral, openai, openrouter, anthropic, googleAI, HarmBlockThreshold, HarmCategory };
+  } catch (error) {
+    console.error('Error initializing AI clients:', error);
+    throw error;
+  }
+}
+
+
 
 class Agent {
   constructor(config) {
@@ -29,6 +71,7 @@ class Agent {
   }
 
   async performInference(userMessage) {
+    const { mistral, openai, openrouter, anthropic, googleAI, HarmBlockThreshold, HarmCategory } = await init()
     this.messages.push({ role: 'user', content: userMessage });
 
     let response;
@@ -45,6 +88,19 @@ class Agent {
         temperature: this.config.temperature || 0.7
       });
     }
+
+    else if  (this.config.model_vendor === 'mistral') {
+      stream = mistral.chatStream({
+        model: this.config.model_id,
+        messages: this.messages,
+        response_format: { type: this.config.response_format || 'text' },
+        max_tokens: this.config.max_tokens || 4096,
+        stream: true,
+        temperature: this.config.temperature || 0.7
+      });
+    }
+
+
     else if (this.config.model_vendor == "anthropic") {
       stream = await anthropic.messages.stream({
         model: this.config.model_id,
@@ -53,6 +109,8 @@ class Agent {
         temperature: this.config.temperature || 0.7
       });
     }
+
+    //Ah, Gemini... 
     else if (this.config.model_vendor == "google") {
       const model = googleAI.getGenerativeModel({
         model: this.config.model_id,
@@ -81,7 +139,11 @@ class Agent {
         history: this.messages.filter(x => x.role != "system").map(msg => ({ role: msg.role, parts: [{ text: msg.content }] })),
         generationConfig: {
           temperature: this.config.temperature || 0.7,
-          maxOutputTokens: this.config.max_tokens || 4096
+          maxOutputTokens: this.config.max_tokens || 4096,
+          responseMimeType: this.config.response_format && this.config.response_format == "json_object" ? 
+            "application/json" 
+            : 
+            "text/plain"
         }
       });
       const result = await chat.sendMessageStream(userMessage);
@@ -94,6 +156,7 @@ class Agent {
         max_tokens: this.config.max_tokens || 4096,
         stream: true,
         temperature: this.config.temperature || 0.7,
+        response_format: { type: this.config.response_format || 'text' }
       });
     } else {
       //Openrouter is our fallback and handles inference for model vendors we have not custom integrated. It is not ideal
@@ -117,6 +180,8 @@ class Agent {
         content = chunk.delta?.text || '';
       } else if (this.config.model_vendor === 'google') {
         content = chunk.text() || '';
+      } else if (this.config.model_vendor === "mistral") {
+        content = chunk.data.choices[0]?.delta?.content || ''
       } else {
         content = chunk.choices[0]?.delta?.content || '';
       }
